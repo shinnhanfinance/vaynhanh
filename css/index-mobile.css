@@ -1,0 +1,48 @@
+/* ============================================
+   MCredit - Desktop layout thu nhỏ trên mobile
+   Giữ giao diện PC, trình duyệt scale vừa màn hình
+   (viewport 1200px via desktop-scale.js)
+   ============================================ */
+
+html.mcredit-desktop-scale {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+html.mcredit-desktop-scale body {
+    min-width: 1200px;
+}
+
+/* Ẩn các block mobile UI cũ (nếu còn trong HTML) */
+.header-mobile,
+.register-now.is-mobile,
+.footer-mobile.is-mobile {
+    display: none !important;
+}
+
+/* Bootstrap: luôn hiện menu desktop khi scale */
+html.mcredit-desktop-scale header .navbar-collapse.collapse {
+    display: flex !important;
+    flex-basis: auto;
+    height: auto !important;
+    visibility: visible !important;
+}
+
+html.mcredit-desktop-scale header .navbar-expand-lg .navbar-nav {
+    flex-direction: row;
+}
+
+/* Tránh zoom iOS khi focus input (kích thước thật ~16px sau scale) */
+html.mcredit-desktop-scale input,
+html.mcredit-desktop-scale select,
+html.mcredit-desktop-scale textarea {
+    font-size: 16px !important;
+}
+
+/* Bỏ ràng buộc touch-target của mobile-accessibility khi scale desktop */
+html.mcredit-desktop-scale a,
+html.mcredit-desktop-scale button,
+html.mcredit-desktop-scale .btn {
+    min-height: unset;
+    min-width: unset;
+}
