@@ -1,0 +1,32 @@
+/* ============================================
+   M CREDIT - Desktop layout thu nhỏ (step pages)
+   Cùng chiến lược với index: viewport 1200px
+   ============================================ */
+
+html.mcredit-desktop-scale {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+html.mcredit-desktop-scale body,
+html.mcredit-desktop-scale #site {
+    min-width: 1200px;
+}
+
+html.mcredit-desktop-scale .mobile-nav-link {
+    display: none !important;
+}
+
+html.mcredit-desktop-scale input,
+html.mcredit-desktop-scale select,
+html.mcredit-desktop-scale textarea,
+html.mcredit-desktop-scale .form-control {
+    font-size: 16px !important;
+}
+
+html.mcredit-desktop-scale a,
+html.mcredit-desktop-scale button,
+html.mcredit-desktop-scale .btn {
+    min-height: unset;
+    min-width: unset;
+}
