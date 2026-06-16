@@ -998,42 +998,35 @@
                   />
                   Ngân hàng TNHH MTV HSBC (Việt Nam)
                 </div>
-                <div
-                  class="custom-select-option"
-                  data-value="standardchartered"
-                >
-                  <img
-                    src="https://s-vnba-cdn.aicms.vn/vnba-media/23/8/11/logo-sc_64d5f750369dd.jpg"
-                    alt="Standard Chartered Vietnam Logo"
-                    class="bank-logo"
-                    onerror="this.src='https://via.placeholder.com/30'"
-                  />
-                  Ngân hàng TNHH MTV Standard Chartered (Việt Nam)
-                </div>
               </div>
-              <input type="hidden" id="bankValue" />
-              <span class="error" id="bankError">Vui lòng chọn ngân hàng</span>
             </div>
+            <span class="error" id="bankError">Vui lòng chọn ngân hàng</span>
           </div>
           <div class="buttons">
-            <button type="submit" class="primary">Xác Nhận</button>
+            <button type="submit" class="primary">Tiếp Tục Để Xác Nhận</button>
           </div>
         </form>
       </div>
     </div>
 
     <footer>
-      <p>&copy; 2024 Mcredit. Tất cả quyền được bảo lưu.</p>
+      <img src="../image/mcredit-logo.png" alt="Mcredit Logo" />
+      <p>&copy; 2024 Mcredit. All rights reserved.</p>
+      <div>
+        <a href="dieu-khoan-su-dung.html">Điều Khoản Sử Dụng</a>
+        <a href="gui-yeu-cau-va-khieu-nai.html">Liên Hệ</a>
+      </div>
     </footer>
 
     <script>
-      // Toggle Mobile Menu
+      // Toggle Menu
       function toggleMenu() {
         const hamburger = document.querySelector(".hamburger");
         const navMenu = document.getElementById("nav-menu");
-        const isExpanded = hamburger.getAttribute("aria-expanded") === "true";
-        
-        hamburger.setAttribute("aria-expanded", !isExpanded);
+        hamburger.setAttribute(
+          "aria-expanded",
+          hamburger.getAttribute("aria-expanded") === "false" ? "true" : "false"
+        );
         navMenu.classList.toggle("show");
       }
 
@@ -1043,78 +1036,87 @@
       const dots = document.querySelectorAll(".dot");
 
       function showSlide(n) {
-        slides[currentSlide].classList.remove("active");
-        dots[currentSlide].classList.remove("active");
-        
-        currentSlide = (n + slides.length) % slides.length;
-        
+        if (n >= slides.length) currentSlide = 0;
+        if (n < 0) currentSlide = slides.length - 1;
+        slides.forEach((slide) => slide.classList.remove("active"));
+        dots.forEach((dot) => dot.classList.remove("active"));
         slides[currentSlide].classList.add("active");
         dots[currentSlide].classList.add("active");
       }
 
-      function changeSlide(direction) {
-        showSlide(currentSlide + direction);
+      function changeSlide(n) {
+        currentSlide += n;
+        showSlide(currentSlide);
       }
 
       function goToSlide(n) {
-        showSlide(n);
+        currentSlide = n;
+        showSlide(currentSlide);
       }
 
       // Bank Selection
       const bankSelect = document.getElementById("bank-select");
-      const bankToggle = bankSelect.querySelector(".custom-select-toggle");
-      const bankList = bankSelect.querySelector(".custom-select-list");
-      const bankOptions = bankSelect.querySelectorAll(".custom-select-option");
-      const bankInput = document.getElementById("bankValue");
+      const toggle = bankSelect.querySelector(".custom-select-toggle");
+      const list = bankSelect.querySelector(".custom-select-list");
+      const options = bankSelect.querySelectorAll(".custom-select-option");
+      let selectedBank = null;
 
-      bankToggle.addEventListener("click", () => {
-        bankList.classList.toggle("show");
-        bankToggle.setAttribute("aria-expanded", bankList.classList.contains("show"));
+      toggle.addEventListener("click", () => {
+        list.classList.toggle("show");
+        toggle.setAttribute(
+          "aria-expanded",
+          toggle.getAttribute("aria-expanded") === "false" ? "true" : "false"
+        );
       });
 
-      bankOptions.forEach(option => {
+      options.forEach((option) => {
         option.addEventListener("click", () => {
-          const value = option.getAttribute("data-value");
-          const text = option.textContent.trim();
-          
-          bankToggle.innerHTML = option.innerHTML;
-          bankInput.value = value;
-          
-          bankOptions.forEach(opt => opt.classList.remove("selected"));
-          option.classList.add("selected");
-          
-          bankList.classList.remove("show");
-          bankToggle.setAttribute("aria-expanded", "false");
-          
-          // Clear error
-          document.getElementById("bankError").classList.remove("show");
+          selectedBank = option.dataset.value;
+          toggle.innerHTML = option.innerHTML;
+          list.classList.remove("show");
+          toggle.setAttribute("aria-expanded", "false");
         });
       });
 
       // Close dropdown when clicking outside
       document.addEventListener("click", (e) => {
         if (!bankSelect.contains(e.target)) {
-          bankList.classList.remove("show");
-          bankToggle.setAttribute("aria-expanded", "false");
+          list.classList.remove("show");
+          toggle.setAttribute("aria-expanded", "false");
         }
       });
 
-      // Form Validation
-      function validateForm() {
+      // Form Validation and Submission
+      const form = document.getElementById("disbursement-form");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        // Get form values
+        const fullName = document.getElementById("fullName").value.trim();
+        const cccd = document.getElementById("cccd").value.trim();
+        const amount = document.getElementById("amount").value;
+        const months = document.getElementById("months").value;
+        const accountNumber = document.getElementById("accountNumber").value.trim();
+        const accountHolder = document.getElementById("accountHolder").value.trim();
+
+        // Validation flags
         let isValid = true;
 
-        // Validate fullName
-        const fullName = document.getElementById("fullName").value.trim();
+        // Validate Full Name
         if (!fullName) {
-          document.getElementById("fullNameError").classList.add("show");
+          document
+            .getElementById("fullNameError")
+            .classList.add("show");
           isValid = false;
         } else {
-          document.getElementById("fullNameError").classList.remove("show");
+          document
+            .getElementById("fullNameError")
+            .classList.remove("show");
         }
 
-        // Validate CCCD
-        const cccd = document.getElementById("cccd").value.replace(/\D/g, "");
-        if (cccd.length !== 9 && cccd.length !== 12) {
+        // Validate CCCD (9 or 12 digits)
+        if (!/^\d{9}$|^\d{12}$/.test(cccd)) {
           document.getElementById("cccdError").classList.add("show");
           isValid = false;
         } else {
@@ -1122,8 +1124,7 @@
         }
 
         // Validate Amount
-        const amount = document.getElementById("amount").value;
-        if (!amount || parseInt(amount) < 10000000) {
+        if (!amount) {
           document.getElementById("amountError").classList.add("show");
           isValid = false;
         } else {
@@ -1131,7 +1132,6 @@
         }
 
         // Validate Months
-        const months = document.getElementById("months").value;
         if (!months) {
           document.getElementById("monthsError").classList.add("show");
           isValid = false;
@@ -1139,66 +1139,54 @@
           document.getElementById("monthsError").classList.remove("show");
         }
 
-        // Validate Account Number
-        const accountNumber = document.getElementById("accountNumber").value.replace(/\D/g, "");
-        if (accountNumber.length < 8 || accountNumber.length > 15) {
-          document.getElementById("accountNumberError").classList.add("show");
+        // Validate Account Number (8-15 digits)
+        if (!/^\d{8,15}$/.test(accountNumber)) {
+          document
+            .getElementById("accountNumberError")
+            .classList.add("show");
           isValid = false;
         } else {
-          document.getElementById("accountNumberError").classList.remove("show");
+          document
+            .getElementById("accountNumberError")
+            .classList.remove("show");
         }
 
         // Validate Account Holder
-        const accountHolder = document.getElementById("accountHolder").value.trim();
         if (!accountHolder) {
-          document.getElementById("accountHolderError").classList.add("show");
+          document
+            .getElementById("accountHolderError")
+            .classList.add("show");
           isValid = false;
         } else {
-          document.getElementById("accountHolderError").classList.remove("show");
+          document
+            .getElementById("accountHolderError")
+            .classList.remove("show");
         }
 
         // Validate Bank
-        const bank = document.getElementById("bankValue").value;
-        if (!bank) {
+        if (!selectedBank) {
           document.getElementById("bankError").classList.add("show");
           isValid = false;
         } else {
           document.getElementById("bankError").classList.remove("show");
         }
 
-        return isValid;
-      }
+        // If all validation passes, navigate to ATM confirmation page
+        if (isValid) {
+          // Store form data in sessionStorage for use on next page
+          sessionStorage.setItem("disbursementData", JSON.stringify({
+            fullName: fullName,
+            cccd: cccd,
+            amount: amount,
+            months: months,
+            accountNumber: accountNumber,
+            accountHolder: accountHolder,
+            bank: selectedBank
+          }));
 
-      // Form Submission
-      document.getElementById("disbursement-form").addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        if (validateForm()) {
-          // Store form data in sessionStorage
-          const formData = {
-            fullName: document.getElementById("fullName").value,
-            cccd: document.getElementById("cccd").value,
-            amount: document.getElementById("amount").value,
-            months: document.getElementById("months").value,
-            accountNumber: document.getElementById("accountNumber").value,
-            accountHolder: document.getElementById("accountHolder").value,
-            bank: document.getElementById("bankValue").value
-          };
-
-          sessionStorage.setItem("disbursementData", JSON.stringify(formData));
-
-          // Redirect to ATM page
+          // Navigate to ATM confirmation page
           window.location.href = "atm.html";
         }
-      });
-
-      // Auto-format CCCD and Account Number
-      document.getElementById("cccd").addEventListener("input", (e) => {
-        e.target.value = e.target.value.replace(/\D/g, "").slice(0, 12);
-      });
-
-      document.getElementById("accountNumber").addEventListener("input", (e) => {
-        e.target.value = e.target.value.replace(/\D/g, "").slice(0, 15);
       });
     </script>
   </body>
